@@ -1,10 +1,20 @@
-language: java
+jobs:
+  include:
+    - os: osx
+      osx_image: xcode11.3
+    - os: windows
 
-os:
-  - linux
-  - osx
 
-before_install: chmod +x ./gradlew
+env:
+  global:
+  - GRAVIS_REPO="https://github.com/DanySK/Gravis-CI.git"
+  - GRAVIS="$HOME/gravis"
+  - JDK="adopt-openj9@1.8"
+
+before_install:
+  - if [ $TRAVIS_OS_NAME == "osx" ] then chmod +x ./gradlew fi
+  - travis_retry git clone --depth 1 $GRAVIS_REPO $GRAVIS
+  - source $GRAVIS/install-jdk
 
 script: ./gradle build --console=plain --parallel
 
