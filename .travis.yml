@@ -14,7 +14,7 @@ env:
   - JDK="adopt-openj9@1.8"
 
 before_install:
-  - if [[ $TRAVIS_OS_NAME == "osx" ]] then chmod +x ./gradlew fi
+  - if [ $TRAVIS_OS_NAME == "osx" ]; then chmod +x ./gradlew; fi
   - travis_retry git clone --depth 1 $GRAVIS_REPO $GRAVIS
   - source $GRAVIS/install-jdk
 
