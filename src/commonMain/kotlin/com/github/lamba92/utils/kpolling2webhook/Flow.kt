@@ -19,10 +19,10 @@ import kotlin.time.ExperimentalTime
 import kotlin.time.minutes
 
 @ExperimentalTime
-inline fun <reified R> polling2WebhookFlow(
+inline fun <reified R, reified T> polling2WebhookFlow(
     targetRequest: HttpRequestBuilder,
+    noinline webhookRequest: (R) -> HttpRequestBuilder,
     noinline objectTransformer: suspend (String) -> R,
-    webhookUrl: Url,
     noinline saveFunction: suspend (R) -> Unit,
     noinline loadFunction: suspend () -> R?,
     interval: Duration = 1.minutes,
@@ -45,14 +45,13 @@ inline fun <reified R> polling2WebhookFlow(
         previousState == null && notifyOnFirstPoll || previousState != null
     }
     .map { (currentState, _) ->
-        httpClient.get<Unit>(webhookUrl)
-        currentState
+        currentState to httpClient.request<T>(webhookRequest(currentState))
     }
 
 @ExperimentalTime
-inline fun <reified R> jsonPolling2WebhookFlow(
+inline fun <reified R, reified T> jsonPolling2WebhookFlow(
     targetRequest: HttpRequestBuilder,
-    webhookUrl: Url,
+    noinline webhookRequest: (R) -> HttpRequestBuilder,
     noinline saveFunction: suspend (R) -> Unit,
     noinline loadFunction: suspend () -> R?,
     interval: Duration = 1.minutes,
@@ -73,6 +72,5 @@ inline fun <reified R> jsonPolling2WebhookFlow(
         previousState == null && notifyOnFirstPoll || previousState != null
     }
     .map { (currentState, _) ->
-        httpClient.get<Unit>(webhookUrl)
-        currentState
+        currentState to httpClient.request<T>(webhookRequest(currentState))
     }
