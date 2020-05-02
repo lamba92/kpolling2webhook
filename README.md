@@ -15,29 +15,29 @@ Inspired by [balsick/cron-webhook](https://github.com/balsick/cron-webhook) ‚ù§Ô
 
 ```kotlin
 val flow = buildKPoller2WebhookFlow<Map<String, String>, String> {
-    pollingRequest {
-        url("http://worldtimeapi.org/api/ip/93.66.61.215.txt")
-    }
-    targetBodyTransform {
-        buildMap {
-            it.split("\n")
-                .map { it.split(":") }
-                .forEach { (k, v) -> put(k, v.removePrefix(" ")) }
-        }
-    }
-    loadStateFunction { map }
-    saveStateFunction { map = it }
-    webhookRequest {
-        request {
-            url("https://webhook.site/48e18e0c-297d-4661-a7a9-c51d42905d93")
-            body = it.toString()
-        }
-    }
-    interval = 5.seconds
+   pollingRequest {
+       url("http://worldtimeapi.org/api/ip/93.66.61.215.txt")
+   }
+   pollingRequestBodyTransform {
+       buildMap {
+           it.split("\n")
+               .map { it.split(":") }
+               .forEach { (k, v) -> put(k, v.removePrefix(" ")) }
+       }
+   }
+   loadStateFunction { map }
+   saveStateFunction { map = it }
+   webhookRequest {
+       request {
+           url("https://webhook.site/48e18e0c-297d-4661-a7a9-c51d42905d93")
+           body = it.toString()
+       }
+   }
+   interval = 5.seconds
 }
 flow.collect { (currentState, webhookResponse) ->
-    println("STATE: $currentState")
-    println("WH RESPONSE BODY: $webhookResponse")
+   println("STATE: $currentState")
+   println("WH RESPONSE BODY: $webhookResponse")
 }
 ```
 A builder for JSON target body is available as well: `buildJsonKPoller2WebhookFlow()`
