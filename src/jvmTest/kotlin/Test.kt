@@ -19,7 +19,7 @@ class Test {
             pollingRequest {
                 url("http://worldtimeapi.org/api/ip/93.66.61.215.txt")
             }
-            targetBodyTransform {
+            pollingRequestBodyTransform {
                 buildMap {
                     it.split("\n")
                         .map { it.split(":") }
