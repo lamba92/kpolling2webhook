@@ -1,0 +1,22 @@
+language: java
+
+os:
+  - linux
+  - osx
+
+before_install: chmod +x ./gradlew
+
+script: ./gradle build --console=plain --parallel
+
+cache:
+  directories:
+    - $HOME/.gradle
+    - $HOME/.konan
+
+deploy:
+  provider: script
+  script: ./gradlew bintrayUpload
+  skip_cleanup: true
+  on:
+    branch: master
+    tags: true
